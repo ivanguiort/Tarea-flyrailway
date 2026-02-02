@@ -1,8 +1,8 @@
 <?php
 // Configuración DB
-$host = '127.0.0.1'; // TCP para evitar Permission denied
+$host = '127.0.0.1';
 $db   = 'app_db';
-$user = 'app_user';  // coincide con init.sql
+$user = 'app_user';
 $pass = 'app_pass';
 $charset = 'utf8mb4';
 
@@ -17,8 +17,8 @@ try {
     die("❌ Error de conexión: " . $e->getMessage());
 }
 
-// Consulta
-$sql = "SELECT * FROM users";
+// Consulta solo a ITEMS
+$sql = "SELECT * FROM ITEMS";
 $stmt = $pdo->query($sql);
 $rows = $stmt->fetchAll();
 ?>
@@ -27,7 +27,7 @@ $rows = $stmt->fetchAll();
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Listado de usuarios</title>
+    <title>Listado de Items</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; }
         table { border-collapse: collapse; width: 50%; }
@@ -37,7 +37,7 @@ $rows = $stmt->fetchAll();
 </head>
 <body>
 
-<h1>Usuarios</h1>
+<h1>Items</h1>
 
 <?php if (count($rows) > 0): ?>
 <table>
