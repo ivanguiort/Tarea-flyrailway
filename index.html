@@ -43,7 +43,6 @@
         }
 
         input {
-            flex: 1;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 6px;
@@ -91,6 +90,7 @@
             border: 1px solid var(--danger);
             padding: 4px 8px;
             border-radius: 4px;
+            cursor: pointer;
         }
 
         .btn-delete:hover {
@@ -104,7 +104,8 @@
         <h2>📦 Lista de Items</h2>
 
         <!-- Formulario para agregar items -->
-        <form action="/api/items" method="POST" class="form-group">
+        <form id="form-agregar" class="form-group">
+            <input type="text" name="codigo" placeholder="Código del item" required>
             <input type="text" name="nombre" placeholder="Nombre del item" required>
             <button type="submit">Agregar</button>
         </form>
@@ -125,26 +126,59 @@
     </div>
 
     <script>
+        const tbody = document.querySelector('#tabla-items tbody');
+        const form = document.getElementById('form-agregar');
+
         // Función para cargar items desde la API
         const cargarItems = () => {
             fetch('/api/items')
                 .then(res => res.json())
                 .then(items => {
-                    const tbody = document.querySelector('#tabla-items tbody');
                     tbody.innerHTML = items.map(item => `
                         <tr>
                             <td>${item.codigo}</td>
                             <td>${item.nombre}</td>
                             <td>
-                                <a href="/api/items/delete/${item.codigo}" class="btn-delete">Eliminar</a>
+                                <button class="btn-delete" data-codigo="${item.codigo}">Eliminar</button>
                             </td>
                         </tr>
                     `).join('');
+
+                    // Agregar evento a los botones eliminar
+                    document.querySelectorAll('.btn-delete').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const codigo = btn.dataset.codigo;
+                            fetch(`/api/items/${codigo}`, { method: 'DELETE' })
+                                .then(res => res.json())
+                                .then(() => cargarItems());
+                        });
+                    });
                 });
         };
 
         // Cargar items al iniciar la página
         cargarItems();
+
+        // Manejar el submit del formulario
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = {
+                codigo: formData.get('codigo'),
+                nombre: formData.get('nombre')
+            };
+
+            fetch('/api/items', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(() => {
+                form.reset();
+                cargarItems();
+            });
+        });
     </script>
 </body>
 </html>
