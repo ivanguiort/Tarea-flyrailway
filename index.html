@@ -3,42 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Usuarios DAW</title>
+    <title>Gestión de Items</title>
     <style>
-        :root { --primary: #4f46e5; --danger: #ef4444; --bg: #f8fafc; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 40px; }
-        .container { background: white; width: 100%; max-width: 500px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-        h2 { color: #1e293b; margin-top: 0; }
-        .form-group { display: flex; gap: 10px; margin-bottom: 25px; }
-        input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; outline: none; }
-        input:focus { border-color: var(--primary); }
-        button { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
-        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f1f5f9; }
-        .user-item:last-child { border: none; }
-        .btn-delete { color: var(--danger); text-decoration: none; font-size: 0.85rem; border: 1px solid var(--danger); padding: 4px 8px; border-radius: 4px; }
-        .btn-delete:hover { background: var(--danger); color: white; }
+        :root {
+            --primary: #4f46e5;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --table-header: #e0e7ff;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: var(--text);
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        th {
+            background: var(--table-header);
+            color: var(--text);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .btn-delete {
+            color: var(--danger);
+            text-decoration: none;
+            font-size: 0.85rem;
+            border: 1px solid var(--danger);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .btn-delete:hover {
+            background: var(--danger);
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>👥 Usuarios del Sistema</h2>
-        <form action="/api/usuarios" method="POST" class="form-group">
-            <input type="text" name="name" placeholder="Nombre completo" required>
+        <h2>📦 Lista de Items</h2>
+
+        <form action="/api/items" method="POST" class="form-group">
+            <input type="text" name="codigo" placeholder="Código" required>
+            <input type="text" name="nombre" placeholder="Nombre del item" required>
             <button type="submit">Agregar</button>
         </form>
-        <div id="lista-usuarios"></div>
+
+        <table id="tabla-items">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Los items se insertarán aquí -->
+            </tbody>
+        </table>
     </div>
 
     <script>
-        fetch('/api/usuarios')
+        fetch('/api/items')
             .then(res => res.json())
-            .then(users => {
-                const div = document.getElementById('lista-usuarios');
-                div.innerHTML = users.map(u => `
-                    <div class="user-item">
-                        <span>${u.name}</span>
-                        <a href="/api/usuarios/delete/${u.id}" class="btn-delete">Eliminar</a>
-                    </div>
+            .then(items => {
+                const tbody = document.querySelector('#tabla-items tbody');
+                tbody.innerHTML = items.map(item => `
+                    <tr>
+                        <td>${item.codigo}</td>
+                        <td>${item.nombre}</td>
+                        <td>
+                            <a href="/api/items/delete/${item.id}" class="btn-delete">Eliminar</a>
+                        </td>
+                    </tr>
                 `).join('');
             });
     </script>
