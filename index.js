@@ -24,8 +24,7 @@ const initDB = () => {
         } else {
             console.log("Conexión a MySQL exitosa. Creando tabla si no existe...");
             const sql = `CREATE TABLE IF NOT EXISTS items (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                codigo VARCHAR(50) NOT NULL,
+                codigo INT AUTO_INCREMENT PRIMARY KEY,
                 nombre VARCHAR(255) NOT NULL
             )`;
             connection.query(sql, (err) => {
@@ -64,11 +63,12 @@ app.post('/api/items', (req, res) => {
 });
 
 // BORRAR (Delete)
-app.get('/api/items/delete/:id', (req, res) => {
-    db.query('DELETE FROM items WHERE id = ?', [req.params.id], (err) => {
+app.get('/api/items/delete/:codigo', (req, res) => {
+    db.query('DELETE FROM items WHERE codigo = ?', [req.params.codigo], (err) => {
         if (err) return res.status(500).send(err);
         res.redirect('/');
     });
 });
 
 app.listen(port, "0.0.0.0", () => console.log(`Servidor en puerto ${port}`));
+
