@@ -98,6 +98,7 @@ RUN rm -f /var/www/html/index.html
 
 COPY . /var/www/html
 RUN chown -R www-data:www-data /var/www/html
+RUN echo "<?php echo 'PHP OK'; ?>" > /var/www/html/index.php
 
 EXPOSE 8080
 
