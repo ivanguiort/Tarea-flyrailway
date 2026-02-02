@@ -22,6 +22,9 @@ RUN apt-get update && apt-get install -y \
 RUN a2enmod rewrite
 RUN sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf \
  && sed -i "s/:80>/:${PORT}>/" /etc/apache2/sites-enabled/000-default.conf
+ RUN sed -i 's/DirectoryIndex.*/DirectoryIndex index.php index.html/' \
+ /etc/apache2/mods-enabled/dir.conf
+
 
 # -------------------------
 # MySQL dirs
@@ -87,6 +90,7 @@ RUN sed -i "s|/usr/sbin/mysqld|/usr/local/bin/mysql-start.sh|" \
 # App
 # -------------------------
 WORKDIR /var/www/html
+RUN rm -f /var/www/html/index.html
 
 COPY . /var/www/html
 RUN chown -R www-data:www-data /var/www/html
